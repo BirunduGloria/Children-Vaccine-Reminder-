@@ -1,0 +1,14 @@
+# Children Vaccine Reminder App Dependencies
+# Core dependencies for the application
+
+# Database support (SQLite is built into Python)
+# No external database dependencies needed
+
+# Development and testing dependencies
+ipdb>=0.13.0
+faker>=18.0.0
+pytest>=7.1.3
+
+# Note: This application uses Python's built-in sqlite3 module
+# and datetime modules, so no additional packages are required
+# for the core functionality.
