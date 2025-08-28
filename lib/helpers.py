@@ -20,19 +20,19 @@ def print_header():
 
 def print_success(message):
     """Print success message"""
-    print(f"✅ {message}")
+    print(f" {message}")
 
 def print_error(message):
     """Print error message"""
-    print(f"❌ {message}")
+    print(f" {message}")
 
 def print_info(message):
     """Print info message"""
-    print(f"ℹ️  {message}")
+    print(f"ℹ {message}")
 
 def print_warning(message):
     """Print warning message"""
-    print(f"⚠️  {message}")
+    print(f"{message}")
 
 def get_valid_date(prompt):
     """Get a valid date from user input"""
@@ -70,7 +70,7 @@ def exit_program():
     """Exit the program"""
     print_header()
     print("Thank you for using the Children Vaccine Reminder App!")
-    print("Stay healthy and keep your children protected! 💉")
+    print("Stay healthy and keep your children protected! ")
     print()
     exit()
 
@@ -78,7 +78,7 @@ def exit_program():
 def register_user():
     """Register a new user"""
     print_header()
-    print("📝 USER REGISTRATION")
+    print(" USER REGISTRATION")
     print("-" * 30)
     
     try:
@@ -110,7 +110,7 @@ def register_user():
 def login_user():
     """Login existing user"""
     print_header()
-    print("🔐 USER LOGIN")
+    print("USER LOGIN")
     print("-" * 30)
     
     username = input("Username: ").strip()
@@ -128,7 +128,7 @@ def login_user():
 def add_child_profile(user):
     """Add a new child profile"""
     print_header()
-    print("👶 ADD CHILD PROFILE")
+    print(" ADD CHILD PROFILE")
     print("-" * 30)
     
     try:
@@ -183,7 +183,7 @@ def schedule_vaccines_for_child(child):
 def view_child_profiles(user):
     """View all child profiles for a user"""
     print_header()
-    print("👶 CHILD PROFILES")
+    print(" CHILD PROFILES")
     print("-" * 30)
     
     children = Child.find_by_user_id(user.id)
@@ -202,7 +202,7 @@ def view_child_profiles(user):
 def delete_child_profile(user):
     """Delete a child profile"""
     print_header()
-    print("🗑️  DELETE CHILD PROFILE")
+    print(" DELETE CHILD PROFILE")
     print("-" * 30)
     
     children = Child.find_by_user_id(user.id)
@@ -233,7 +233,7 @@ def delete_child_profile(user):
 def view_vaccine_schedule(child):
     """View vaccine schedule for a specific child"""
     print_header()
-    print(f"💉 VACCINE SCHEDULE FOR {child.name.upper()}")
+    print(f" VACCINE SCHEDULE FOR {child.name.upper()}")
     print("-" * 50)
     
     child_vaccines = ChildVaccine.find_by_child_id(child.id)
@@ -251,7 +251,7 @@ def view_vaccine_schedule(child):
     overdue = [cv for cv in child_vaccines if cv.status == 'overdue']
     
     if overdue:
-        print("🚨 OVERDUE VACCINES:")
+        print(" OVERDUE VACCINES:")
         for cv in overdue:
             vaccine = cv.get_vaccine()
             days_overdue = abs(cv.days_until_due)
@@ -259,7 +259,7 @@ def view_vaccine_schedule(child):
         print()
     
     if scheduled:
-        print("📅 UPCOMING VACCINES:")
+        print(" UPCOMING VACCINES:")
         for cv in scheduled:
             vaccine = cv.get_vaccine()
             if cv.is_due_soon:
@@ -269,7 +269,7 @@ def view_vaccine_schedule(child):
         print()
     
     if completed:
-        print("✅ COMPLETED VACCINES:")
+        print(" COMPLETED VACCINES:")
         for cv in completed:
             vaccine = cv.get_vaccine()
             print(f"   • {vaccine.name} - Completed: {cv.completed_date}")
@@ -278,7 +278,7 @@ def view_vaccine_schedule(child):
 def mark_vaccine_complete(child):
     """Mark a vaccine as complete"""
     print_header()
-    print(f"✅ MARK VACCINE COMPLETE FOR {child.name.upper()}")
+    print(f"MARK VACCINE COMPLETE FOR {child.name.upper()}")
     print("-" * 50)
     
     # Get vaccines that are not completed
@@ -310,7 +310,7 @@ def mark_vaccine_complete(child):
 def view_all_vaccines():
     """View all available vaccines"""
     print_header()
-    print("💉 AVAILABLE VACCINES")
+    print(" AVAILABLE VACCINES")
     print("-" * 30)
     
     vaccines = Vaccine.get_all()
@@ -332,7 +332,7 @@ def view_all_vaccines():
 def view_reminders(user):
     """View all reminders for a user's children"""
     print_header()
-    print("🔔 VACCINE REMINDERS")
+    print(" VACCINE REMINDERS")
     print("-" * 30)
     
     children = Child.find_by_user_id(user.id)
@@ -371,7 +371,7 @@ def view_reminders(user):
 def check_overdue_vaccines(user):
     """Check for overdue vaccines across all children"""
     print_header()
-    print("🚨 OVERDUE VACCINES CHECK")
+    print("OVERDUE VACCINES CHECK")
     print("-" * 30)
     
     children = Child.find_by_user_id(user.id)
@@ -386,7 +386,7 @@ def check_overdue_vaccines(user):
         
         if overdue_vaccines:
             overdue_found = True
-            print(f"🚨 {child.name} has {len(overdue_vaccines)} overdue vaccine(s):")
+            print(f" {child.name} has {len(overdue_vaccines)} overdue vaccine(s):")
             
             for cv in overdue_vaccines:
                 vaccine = cv.get_vaccine()
@@ -401,6 +401,6 @@ def exit_program():
     """Exit the program"""
     print_header()
     print("Thank you for using the Children Vaccine Reminder App!")
-    print("Stay healthy and keep your children protected! 💉")
+    print("Stay healthy and keep your children protected! ")
     print()
     exit()

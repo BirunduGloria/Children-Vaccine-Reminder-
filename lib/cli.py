@@ -47,7 +47,7 @@ def show_login_menu():
     """Show login/registration menu"""
     while True:
         print_header()
-        print("🔐 WELCOME TO VACCINE REMINDER APP")
+        print("WELCOME TO VACCINE REMINDER APP")
         print("-" * 40)
         print("1. Login")
         print("2. Register")
@@ -74,7 +74,7 @@ def show_login_menu():
 def show_main_menu(user):
     """Show main application menu"""
     print_header()
-    print(f"👋 Welcome, {user.username}!")
+    print(f" Welcome, {user.username}!")
     print(f"Language: {user.language.upper()}")
     print("-" * 40)
     print("1. Manage Child Profiles")
@@ -90,7 +90,7 @@ def manage_child_profiles(user):
     """Manage child profiles submenu"""
     while True:
         print_header()
-        print("👶 CHILD PROFILE MANAGEMENT")
+        print("CHILD PROFILE MANAGEMENT")
         print("-" * 40)
         print("1. Add New Child Profile")
         print("2. View Child Profiles")
@@ -126,7 +126,7 @@ def manage_vaccines(user):
     """Manage vaccines submenu"""
     while True:
         print_header()
-        print("💉 VACCINE MANAGEMENT")
+        print("VACCINE MANAGEMENT")
         print("-" * 40)
         print("1. View All Available Vaccines")
         print("2. Check Overdue Vaccines")
@@ -154,7 +154,7 @@ def manage_reminders(user):
     """Manage reminders submenu"""
     while True:
         print_header()
-        print("🔔 REMINDER MANAGEMENT")
+        print("REMINDER MANAGEMENT")
         print("-" * 40)
         print("1. View All Reminders")
         print("2. View Due Reminders")
@@ -181,7 +181,7 @@ def manage_reminders(user):
 def view_health_records(user):
     """View comprehensive health records"""
     print_header()
-    print("📋 HEALTH RECORDS OVERVIEW")
+    print(" HEALTH RECORDS OVERVIEW")
     print("-" * 40)
     
     children = Child.find_by_user_id(user.id)
@@ -191,7 +191,7 @@ def view_health_records(user):
         return
     
     for child in children:
-        print(f"👶 {child.name.upper()}")
+        print(f" {child.name.upper()}")
         print(f"   Date of Birth: {child.date_of_birth}")
         print(f"   Age: {child.age_in_months} months ({child.age_in_years} years)")
         print(f"   Gender: {child.gender.capitalize()}")
@@ -204,7 +204,7 @@ def view_health_records(user):
         
         print(f"   Vaccines: {completed_vaccines}/{total_vaccines} completed")
         if overdue_vaccines > 0:
-            print(f"   ⚠️  {overdue_vaccines} overdue vaccines")
+            print(f"     {overdue_vaccines} overdue vaccines")
         
         print()
     
@@ -214,7 +214,7 @@ def manage_account(user):
     """Manage account settings"""
     while True:
         print_header()
-        print("⚙️  ACCOUNT SETTINGS")
+        print(" ACCOUNT SETTINGS")
         print("-" * 40)
         print(f"Username: {user.username}")
         print(f"Email: {user.email}")
@@ -288,7 +288,7 @@ def select_child_for_completion(user):
 def view_due_soon_vaccines(user):
     """View vaccines due soon for all children"""
     print_header()
-    print("⏰ VACCINES DUE SOON (Next 7 days)")
+    print("VACCINES DUE SOON (Next 7 days)")
     print("-" * 50)
     
     children = Child.find_by_user_id(user.id)
@@ -304,7 +304,7 @@ def view_due_soon_vaccines(user):
         
         if due_soon:
             due_soon_found = True
-            print(f"👶 {child.name}:")
+            print(f" {child.name}:")
             for cv in due_soon:
                 vaccine = cv.get_vaccine()
                 print(f"   • {vaccine.name} - Due: {cv.scheduled_date} (in {cv.days_until_due} days)")
@@ -316,7 +316,7 @@ def view_due_soon_vaccines(user):
 def view_due_reminders(user):
     """View reminders that are due"""
     print_header()
-    print("🔔 DUE REMINDERS")
+    print(" DUE REMINDERS")
     print("-" * 30)
     
     due_reminders = Reminder.find_due_reminders()
@@ -338,7 +338,7 @@ def view_due_reminders(user):
 def create_custom_reminder(user):
     """Create a custom reminder for a child's vaccine"""
     print_header()
-    print("📝 CREATE CUSTOM REMINDER")
+    print(" CREATE CUSTOM REMINDER")
     print("-" * 30)
     
     children = Child.find_by_user_id(user.id)
@@ -395,13 +395,14 @@ def create_reminder_for_child(child):
 def change_language(user):
     """Change user's preferred language"""
     print_header()
-    print("🌍 CHANGE LANGUAGE")
+    print(" CHANGE LANGUAGE")
     print("-" * 30)
     
-    languages = ['en', 'es', 'fr', 'de', 'ar', 'zh']
+    languages = ['en', 'swahili']
     language_names = {
-        'en': 'English', 'es': 'Spanish', 'fr': 'French',
-        'de': 'German', 'ar': 'Arabic', 'zh': 'Chinese'
+        'en': 'English', 
+        'sw' : 'Swahili'
+    
     }
     
     print("Available languages:")
@@ -425,7 +426,7 @@ def change_language(user):
 def change_password(user):
     """Change user's password"""
     print_header()
-    print("🔐 CHANGE PASSWORD")
+    print(" CHANGE PASSWORD")
     print("-" * 30)
     
     current_password = input("Current password: ").strip()
@@ -456,10 +457,10 @@ def change_password(user):
 def delete_account(user):
     """Delete user account"""
     print_header()
-    print("🗑️  DELETE ACCOUNT")
+    print("  DELETE ACCOUNT")
     print("-" * 30)
     
-    print("⚠️  WARNING: This action cannot be undone!")
+    print(" WARNING: This action cannot be undone!")
     print(f"All data for user '{user.username}' will be permanently deleted.")
     print("This includes:")
     print("  - Child profiles")

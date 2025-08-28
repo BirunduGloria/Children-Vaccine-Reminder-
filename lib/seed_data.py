@@ -9,7 +9,7 @@ from datetime import datetime, date, timedelta
 
 def seed_vaccines():
     """Seed the database with standard vaccine information"""
-    print("🌱 Seeding vaccines...")
+    print("Seeding vaccines...")
     
     vaccines_data = [
         {
@@ -96,16 +96,16 @@ def seed_vaccines():
                 vaccine_data["is_required"]
             )
     
-    print(f"✅ Seeded {len(vaccines_data)} vaccines")
+    print(f"Seeded {len(vaccines_data)} vaccines")
 
 def seed_sample_user():
     """Seed a sample user for testing"""
-    print("🌱 Seeding sample user...")
+    print("Seeding sample user...")
     
     # Check if sample user already exists
     existing_user = User.find_by_username("demo_user")
     if existing_user:
-        print("✅ Sample user already exists")
+        print("Sample user already exists")
         return existing_user
     
     user = User.create(
@@ -115,17 +115,17 @@ def seed_sample_user():
         language="en"
     )
     
-    print("✅ Sample user created: demo_user / password123")
+    print("Sample user created: demo_user / password123")
     return user
 
 def seed_sample_child(user):
     """Seed a sample child for testing"""
-    print("🌱 Seeding sample child...")
+    print("Seeding sample child...")
     
     # Check if sample child already exists
     existing_children = Child.find_by_user_id(user.id)
     if existing_children:
-        print("✅ Sample child already exists")
+        print("Sample child already exists")
         return existing_children[0]
     
     # Create a child born 6 months ago
@@ -137,12 +137,12 @@ def seed_sample_child(user):
         gender="female"
     )
     
-    print("✅ Sample child created: Baby Emma")
+    print("Sample child created: Baby Emma")
     return child
 
 def seed_sample_schedules(child):
     """Seed sample vaccine schedules for the child"""
-    print("🌱 Seeding sample vaccine schedules...")
+    print("Seeding sample vaccine schedules...")
     
     # Get vaccines appropriate for child's age
     age_months = child.age_in_months
@@ -165,7 +165,7 @@ def seed_sample_schedules(child):
             
             schedules_created += 1
     
-    print(f"✅ Created {schedules_created} vaccine schedules")
+    print(f"Created {schedules_created} vaccine schedules")
 
 def seed_all():
     """Seed all data"""
@@ -195,8 +195,9 @@ def seed_all():
         print("appropriate vaccine schedules based on her age.")
         
     except Exception as e:
-        print(f"❌ Error during seeding: {e}")
+        print(f"Error during seeding: {e}")
         CONN.rollback()
 
 if __name__ == "__main__":
     seed_all()
+

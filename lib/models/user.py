@@ -132,3 +132,4 @@ class User:
     def get_children(self):
         from models.child import Child
         return Child.find_by_user_id(self.id)
+

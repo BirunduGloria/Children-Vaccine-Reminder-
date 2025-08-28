@@ -136,3 +136,4 @@ class Child:
     def get_overdue_vaccines(self):
         from models.child_vaccine import ChildVaccine
         return ChildVaccine.find_overdue_by_child_id(self.id)
+
