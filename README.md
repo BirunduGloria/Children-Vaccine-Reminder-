@@ -5,45 +5,45 @@ A comprehensive Python CLI application that helps parents and caregivers manage 
 ##  Features
 
 ### Core Functionality
-- **User Management**: Secure registration and login system with multi-language support
-- **Child Profiles**: Add and manage multiple children with birth date and gender information
-- **Vaccine Scheduling**: Automatic vaccine scheduling based on child's age and standard recommendations
-- **Smart Reminders**: Automated reminders for upcoming vaccines with customizable messages
-- **Health Records**: Comprehensive tracking of completed, scheduled, and overdue vaccines
-- **Multi-language Support**: Available in English, Spanish, French, German, Arabic, and Chinese
+- User Management: Secure registration and login system with multi-language support
+- Child Profiles: Add and manage multiple children with birth date and gender information
+- Vaccine Scheduling: Automatic vaccine scheduling based on child's age and standard recommendations
+- Smart Reminders: Automated reminders for upcoming vaccines with customizable messages
+- Health Records: Comprehensive tracking of completed, scheduled, and overdue vaccines
+- Multi-language Support: Available in English, Spanish, French, German, Arabic, and Chinese
 
 ### Vaccine Management
-- **Standard Vaccines**: Pre-loaded with CDC-recommended vaccine schedule
-- **Age-based Scheduling**: Automatically calculates appropriate vaccine dates based on child's age
-- **Status Tracking**: Monitor vaccines as scheduled, completed, or overdue
-- **Educational Information**: Detailed descriptions and information about each vaccine
+- Standard Vaccines: Pre-loaded with CDC-recommended vaccine schedule
+- Age-based Scheduling: Automatically calculates appropriate vaccine dates based on child's age
+- Status Tracking: Monitor vaccines as scheduled, completed, or overdue
+- Educational Information: Detailed descriptions and information about each vaccine
 
 ### Reminder System
-- **Automated Reminders**: 7-day advance notifications for upcoming vaccines
-- **Custom Reminders**: Create personalized reminders for specific needs
-- **Overdue Alerts**: Track and manage overdue vaccines
-- **Due Soon Notifications**: Identify vaccines due in the next 7 days
+- Automated Reminders: 7-day advance notifications for upcoming vaccines
+- Custom Reminders: Create personalized reminders for specific needs
+- Overdue Alerts: Track and manage overdue vaccines
+- Due Soon Notifications: Identify vaccines due in the next 7 days
 
 ##  Architecture
 
 ### Object-Relational Mapping (ORM)
 The application implements a custom ORM system with the following model classes:
 
-- **User**: Manages user accounts with authentication and preferences
-- **Child**: Represents children with age calculations and profile information
-- **Vaccine**: Contains standard vaccine information and recommendations
-- **ChildVaccine**: Manages the relationship between children and vaccines (one-to-many)
-- **Reminder**: Handles vaccine reminders and notifications
+- User: Manages user accounts with authentication and preferences
+- Child: Represents children with age calculations and profile information
+- Vaccine: Contains standard vaccine information and recommendations
+- ChildVaccine: Manages the relationship between children and vaccines (one-to-many)
+- Reminder: Handles vaccine reminders and notifications
 
 ### Database Design
-- **SQLite Database**: Lightweight, file-based database for easy deployment
-- **Relational Structure**: Proper foreign key relationships between tables
-- **Data Integrity**: Constraints and validation at the database level
+- SQLite Database: Lightweight, file-based database for easy deployment
+- Relational Structure: Proper foreign key relationships between tables
+- Data Integrity: Constraints and validation at the database level
 
 ### CLI Interface
-- **Menu-driven Navigation**: Intuitive command-line interface with clear options
-- **Input Validation**: Comprehensive error handling and user input validation
-- **User Experience**: Clear feedback, success messages, and error handling
+- Menu-driven Navigation: Intuitive command-line interface with clear options
+- Input Validation: Comprehensive error handling and user input validation
+- User Experience: Clear feedback, success messages, and error handling
 
 ## Getting Started
 
@@ -107,7 +107,7 @@ After seeding the database, you can use these credentials:
 3. Select the child and vaccine to mark as complete
 4. Enter the completion date
 
-## 🗄️ Database Schema
+##  Database Schema
 
 ### Tables
 - **users**: User accounts and preferences
