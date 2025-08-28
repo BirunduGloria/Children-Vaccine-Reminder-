@@ -35,10 +35,12 @@ def main():
             elif choice == "3":
                 manage_reminders(current_user)
             elif choice == "4":
-                view_health_records(current_user)
+                set_next_vaccine_reminder(current_user)
             elif choice == "5":
-                manage_account(current_user)
+                view_health_records(current_user)
             elif choice == "6":
+                manage_account(current_user)
+            elif choice == "7":
                 exit_program()
             else:
                 print_error("Invalid choice. Please try again.")
@@ -80,10 +82,11 @@ def show_main_menu(user):
     print("1. Manage Child Profiles")
     print("2. Manage Vaccines")
     print("3. Manage Reminders")
-    print("4. View Health Records")
-    print("5. Account Settings")
+    print("4. Set Next Vaccine Reminder")
+    print("5. View Health Records")
+    print("6. Account Settings")
     print("0. Logout")
-    print("6. Exit Program")
+    print("7. Exit Program")
     print()
 
 def manage_child_profiles(user):
@@ -97,6 +100,7 @@ def manage_child_profiles(user):
         print("3. Delete Child Profile")
         print("4. View Vaccine Schedule")
         print("5. Mark Vaccine Complete")
+        print("6. Schedule Vaccine for Child")
         print("0. Back to Main Menu")
         print()
         
@@ -116,6 +120,9 @@ def manage_child_profiles(user):
             input("\nPress Enter to continue...")
         elif choice == "5":
             select_child_for_completion(user)
+            input("\nPress Enter to continue...")
+        elif choice == "6":
+            schedule_vaccine_for_child(user)
             input("\nPress Enter to continue...")
         elif choice == "0":
             break
@@ -285,6 +292,52 @@ def select_child_for_completion(user):
     except ValueError:
         print_error("Please enter a valid number.")
 
+def schedule_vaccine_for_child(user):
+    """Allow user to schedule a vaccine for a selected child and show educational info."""
+    children = Child.find_by_user_id(user.id)
+    if not children:
+        print_info("No children profiles found. Add a child profile first.")
+        return
+    print("Select child to schedule a vaccine:")
+    for i, child in enumerate(children, 1):
+        print(f"{i}. {child.name}")
+    try:
+        choice = int(input("Enter choice: ").strip())
+    except ValueError:
+        print_error("Please enter a valid number.")
+        return
+    if not (1 <= choice <= len(children)):
+        print_error("Invalid choice.")
+        return
+    child = children[choice - 1]
+    # List all vaccines
+    vaccines = Vaccine.get_all()
+    print(f"Available vaccines to schedule for {child.name}:")
+    for i, vaccine in enumerate(vaccines, 1):
+        print(f"{i}. {vaccine.name} (Recommended at {vaccine.recommended_age_months} months)")
+    try:
+        vchoice = int(input("Select vaccine: ").strip())
+    except ValueError:
+        print_error("Please enter a valid number.")
+        return
+    if not (1 <= vchoice <= len(vaccines)):
+        print_error("Invalid choice.")
+        return
+    vaccine = vaccines[vchoice - 1]
+    scheduled_date = input("Enter scheduled date (YYYY-MM-DD): ").strip()
+    try:
+        ChildVaccine.create(child.id, vaccine.id, scheduled_date)
+        print_success(f"Vaccine {vaccine.name} scheduled for {child.name} on {scheduled_date}.")
+        # Show educational insights
+        print("\nEducational Insights:")
+        print(f"Vaccine: {vaccine.name}")
+        print(f"Description: {vaccine.description}")
+        print(f"Recommended Age: {vaccine.recommended_age_months} months")
+        print(f"Dose Number: {vaccine.dose_number}")
+        print(f"Required: {'Yes' if vaccine.is_required else 'No'}")
+    except Exception as e:
+        print_error(f"Failed to schedule vaccine: {e}")
+
 def view_due_soon_vaccines(user):
     """View vaccines due soon for all children"""
     print_header()
@@ -405,6 +458,7 @@ def change_language(user):
     
     }
     
+    
     print("Available languages:")
     for i, lang in enumerate(languages, 1):
         print(f"{i}. {language_names[lang]}")
@@ -491,5 +545,68 @@ def delete_account(user):
         print_info("Account deletion cancelled.")
         return False
 
-if __name__ == "__main__":
-    main()
+def set_next_vaccine_reminder(user):
+    """Streamlined flow: select child, show next vaccine, set reminder, then log out."""
+    children = Child.find_by_user_id(user.id)
+    if not children:
+        print_info("No children profiles found. Add a child profile first.")
+        return
+    print("Select child to set next vaccine reminder:")
+    for i, child in enumerate(children, 1):
+        print(f"{i}. {child.name}")
+    try:
+        choice = int(input("Enter choice: ").strip())
+    except ValueError:
+        print_error("Please enter a valid number.")
+        return
+    if not (1 <= choice <= len(children)):
+        print_error("Invalid choice.")
+        return
+    child = children[choice - 1]
+    # List all upcoming vaccines for the child
+    upcoming = [cv for cv in ChildVaccine.find_by_child_id(child.id) if cv.status == 'scheduled' and cv.scheduled_date >= date.today()]
+    if not upcoming:
+        print_info("No upcoming vaccines for this child.")
+        return
+    print(f"Upcoming vaccines for {child.name}:")
+    for i, cv in enumerate(upcoming, 1):
+        vaccine = cv.get_vaccine()
+        print(f"{i}. {vaccine.name} - Due: {cv.scheduled_date}")
+    try:
+        vchoice = int(input("Select vaccine to set reminder for: ").strip())
+    except ValueError:
+        print_error("Please enter a valid number.")
+        return
+    if not (1 <= vchoice <= len(upcoming)):
+        print_error("Invalid choice.")
+        return
+    selected_cv = upcoming[vchoice - 1]
+    vaccine = selected_cv.get_vaccine()
+    print(f"Setting reminder for {vaccine.name} on {selected_cv.scheduled_date}")
+    reminder_date = input("Reminder date (YYYY-MM-DD): ").strip()
+    message = input("Reminder message: ").strip()
+    if reminder_date and message:
+        Reminder.create(selected_cv.id, reminder_date, message)
+        print_success("Reminder set successfully!")
+        print_success("Logging out...")
+        exit_program()
+    else:
+        print_error("Reminder date and message are required.")
+        return
+
+def view_vaccine_schedule(child):
+    """Display the vaccine schedule for a child in a table format."""
+    from models.child_vaccine import ChildVaccine
+    print(f"\nVaccine Schedule for {child.name}:")
+    print("-" * 70)
+    print(f"{'Vaccine':20} | {'Scheduled Date':15} | {'Status':10} | {'Completed Date':15}")
+    print("-" * 70)
+    child_vaccines = ChildVaccine.find_by_child_id(child.id)
+    if not child_vaccines:
+        print_info("No vaccines scheduled for this child.")
+        return
+    for cv in child_vaccines:
+        vaccine = cv.get_vaccine()
+        completed = cv.completed_date if cv.completed_date else "-"
+        print(f"{vaccine.name:20} | {str(cv.scheduled_date):15} | {cv.status:10} | {str(completed):15}")
+    print("-" * 70)
