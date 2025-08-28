@@ -14,7 +14,7 @@ def clear_screen():
 def print_header():
     """Print application header"""
     print("=" * 60)
-    print("           CHILDREN VACCINE REMINDER APP")
+    print("           CHILD VACCINE REMINDER APP")
     print("=" * 60)
     print()
 
