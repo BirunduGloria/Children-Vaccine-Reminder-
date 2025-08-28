@@ -2,7 +2,7 @@
 
 A comprehensive Python CLI application that helps parents and caregivers manage their children's vaccine schedules, receive automated reminders, and maintain health records.
 
-## 🌟 Features
+##  Features
 
 ### Core Functionality
 - **User Management**: Secure registration and login system with multi-language support
