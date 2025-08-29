@@ -1,4 +1,4 @@
-from models import CONN, CURSOR
+from ..db import get_db
 from datetime import datetime, date
 
 class Reminder:
@@ -54,93 +54,40 @@ class Reminder:
         else:
             raise ValueError("Sent must be a boolean or integer value")
 
-            def save(self):
-                conn, cursor = get_db()
-                if self.id:
-                    cursor.execute("""
-                        UPDATE reminders 
-                        SET child_vaccine_id = ?, reminder_date = ?, message = ?, sent = ?
-                        WHERE id = ?
-                    """, (self.child_vaccine_id, self.reminder_date, self.message, self.sent, self.id))
-                else:
-                    cursor.execute("""
-                        INSERT INTO reminders (child_vaccine_id, reminder_date, message, sent, created_at)
-                        VALUES (?, ?, ?, ?, ?)
-                    """, (self.child_vaccine_id, self.reminder_date, self.message, self.sent, self.created_at))
-                    self.id = cursor.lastrowid
-                conn.commit()
-                conn.close()
-                return self
     @property
     def is_due(self):
         return self.reminder_date <= date.today() and not self.sent
 
     # ORM Methods
     def save(self):
+        conn, cursor = get_db()
         if self.id:
-            CURSOR.execute("""
-            def delete(self):
-                if self.id:
-                    conn, cursor = get_db()
-                    cursor.execute("DELETE FROM reminders WHERE id = ?", (self.id,))
-                    conn.commit()
-                    conn.close()
-                    self.id = None
-                    return True
-                return False
+            cursor.execute("""
                 UPDATE reminders 
                 SET child_vaccine_id = ?, reminder_date = ?, message = ?, sent = ?
                 WHERE id = ?
             """, (self.child_vaccine_id, self.reminder_date, self.message, self.sent, self.id))
         else:
-            CURSOR.execute("""
+            cursor.execute("""
                 INSERT INTO reminders (child_vaccine_id, reminder_date, message, sent, created_at)
                 VALUES (?, ?, ?, ?, ?)
-            @classmethod
-            def find_by_id(cls, id):
-                conn, cursor = get_db()
-                cursor.execute("SELECT * FROM reminders WHERE id = ?", (id,))
-                row = cursor.fetchone()
-                conn.close()
-                if row:
-                    from lib.db import get_db
-                return None
             """, (self.child_vaccine_id, self.reminder_date, self.message, self.sent, self.created_at))
-            self.id = CURSOR.lastrowid
-        
-        CONN.commit()
+            self.id = cursor.lastrowid
+        conn.commit()
+        conn.close()
         return self
 
-            @classmethod
-            def find_by_child_vaccine_id(cls, child_vaccine_id):
-                conn, cursor = get_db()
-                cursor.execute("SELECT * FROM reminders WHERE child_vaccine_id = ? ORDER BY reminder_date", (child_vaccine_id,))
-                rows = cursor.fetchall()
-                conn.close()
-                return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
     def delete(self):
         if self.id:
-            CURSOR.execute("DELETE FROM reminders WHERE id = ?", (self.id,))
-            CONN.commit()
+            conn, cursor = get_db()
+            cursor.execute("DELETE FROM reminders WHERE id = ?", (self.id,))
+            conn.commit()
+            conn.close()
             self.id = None
             return True
         return False
 
-    def mark_sent(self):
-        self.sent = True
-            @classmethod
-            def find_due_reminders(cls):
-                conn, cursor = get_db()
-                cursor.execute("""
-                    SELECT * FROM reminders 
-                    WHERE reminder_date <= ? AND sent = 0
-                    ORDER BY reminder_date
-                """, (date.today(),))
-                rows = cursor.fetchall()
-                conn.close()
-                return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
-        self.save()
-        return self
+
 
     @classmethod
     def create(cls, child_vaccine_id, reminder_date, message):
@@ -150,63 +97,54 @@ class Reminder:
 
     @classmethod
     def find_by_id(cls, id):
-            @classmethod
-            def find_upcoming_reminders(cls, days=7):
-                from datetime import timedelta
-                target_date = date.today() + timedelta(days=days)
-                conn, cursor = get_db()
-                cursor.execute("""
-                    SELECT * FROM reminders 
-                    WHERE reminder_date <= ? AND reminder_date >= ? AND sent = 0
-                    ORDER BY reminder_date
-                """, (target_date, date.today()))
-                rows = cursor.fetchall()
-                conn.close()
-                return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
-        CURSOR.execute("SELECT * FROM reminders WHERE id = ?", (id,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM reminders WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[0], row[5])
         return None
 
-            @classmethod
-            def get_all(cls):
-                conn, cursor = get_db()
-                cursor.execute("SELECT * FROM reminders ORDER BY reminder_date")
-                rows = cursor.fetchall()
-                conn.close()
-                return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
     @classmethod
     def find_by_child_vaccine_id(cls, child_vaccine_id):
-        CURSOR.execute("SELECT * FROM reminders WHERE child_vaccine_id = ? ORDER BY reminder_date", (child_vaccine_id,))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM reminders WHERE child_vaccine_id = ? ORDER BY reminder_date", (child_vaccine_id,))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     @classmethod
     def find_due_reminders(cls):
-        CURSOR.execute("""
+        conn, cursor = get_db()
+        cursor.execute("""
             SELECT * FROM reminders 
             WHERE reminder_date <= ? AND sent = 0
             ORDER BY reminder_date
         """, (date.today(),))
-        rows = CURSOR.fetchall()
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     @classmethod
     def find_upcoming_reminders(cls, days=7):
-        target_date = date.today() + datetime.timedelta(days=days)
-        CURSOR.execute("""
+        from datetime import timedelta
+        target_date = date.today() + timedelta(days=days)
+        conn, cursor = get_db()
+        cursor.execute("""
             SELECT * FROM reminders 
             WHERE reminder_date <= ? AND reminder_date >= ? AND sent = 0
             ORDER BY reminder_date
         """, (target_date, date.today()))
-        rows = CURSOR.fetchall()
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     @classmethod
     def get_all(cls):
-        CURSOR.execute("SELECT * FROM reminders ORDER BY reminder_date")
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM reminders ORDER BY reminder_date")
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     def get_child_vaccine(self):

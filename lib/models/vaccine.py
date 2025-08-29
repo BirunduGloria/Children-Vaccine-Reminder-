@@ -1,4 +1,4 @@
-from lib.db import get_db
+from ..db import get_db
 from datetime import datetime
 
 class Vaccine:

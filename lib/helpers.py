@@ -1,9 +1,9 @@
 # lib/helpers.py
-from models.user import User
-from models.child import Child
-from models.vaccine import Vaccine
-from models.child_vaccine import ChildVaccine
-from models.reminder import Reminder
+from .models.user import User
+from .models.child import Child
+from .models.vaccine import Vaccine
+from .models.child_vaccine import ChildVaccine
+from .models.reminder import Reminder
 from datetime import datetime, date, timedelta
 import os
 import re

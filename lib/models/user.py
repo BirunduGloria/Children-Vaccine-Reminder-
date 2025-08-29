@@ -1,9 +1,19 @@
-from models import CONN, CURSOR
+from ..db import get_db
 import hashlib
 from datetime import datetime
 
 # User model handles user registration, authentication, and user data
 class User:
+    @classmethod
+    def authenticate(cls, username, password):
+        import hashlib
+        user = cls.find_by_username(username)
+        if not user:
+            return None
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        if user.password_hash == password_hash:
+            return user
+        return None
     def __init__(self, username, email, password_hash, language="en", id=None, created_at=None):
         # User attributes
         self.id = id
@@ -59,16 +69,6 @@ class User:
     @property
     def password_hash(self):
         return self._password_hash
-
-        @classmethod
-        def find_by_username(cls, username):
-            conn, cursor = get_db()
-            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-            row = cursor.fetchone()
-            conn.close()
-            if row:
-                return cls(row[1], row[2], row[3], row[4], row[0], row[5])
-            return None
     @password_hash.setter
     def password_hash(self, value):
         # Password must be at least 6 characters
@@ -77,15 +77,6 @@ class User:
         self._password_hash = value
 
     @property
-        @classmethod
-        def find_by_email(cls, email):
-            conn, cursor = get_db()
-            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-            row = cursor.fetchone()
-            conn.close()
-            if row:
-                return cls(row[1], row[2], row[3], row[4], row[0], row[5])
-            return None
     def language(self):
         return self._language
 
@@ -94,71 +85,71 @@ class User:
         # Only allow supported languages
         valid_languages = ['en']
         if value not in valid_languages:
-        @classmethod
-        def find_by_id(cls, id):
-            conn, cursor = get_db()
-            cursor.execute("SELECT * FROM users WHERE id = ?", (id,))
-            row = cursor.fetchone()
-            conn.close()
-            if row:
-                return cls(row[1], row[2], row[3], row[4], row[0], row[5])
-            return None
             raise ValueError(f"Language must be one of: {', '.join(valid_languages)}")
         self._language = value
 
     # ORM Methods for database interaction
     def save(self):
         # Save or update user in the database
+        conn, cursor = get_db()
         if self.id:
-            CURSOR.execute("""
+            cursor.execute("""
                 UPDATE users SET username=?, email=?, password_hash=?, language=? WHERE id=?
             """, (self.username, self.email, self.password_hash, self.language, self.id))
         else:
-            CURSOR.execute("""
+            cursor.execute("""
                 INSERT INTO users (username, email, password_hash, language, created_at)
                 VALUES (?, ?, ?, ?, ?)
             """, (self.username, self.email, self.password_hash, self.language, self.created_at))
-            self.id = CURSOR.lastrowid
-        CONN.commit()
+            self.id = cursor.lastrowid
+        conn.commit()
+        conn.close()
         return self
 
     def delete(self):
         if self.id:
-            CURSOR.execute("DELETE FROM users WHERE id = ?", (self.id,))
-            CONN.commit()
+            conn, cursor = get_db()
+            cursor.execute("DELETE FROM users WHERE id = ?", (self.id,))
+            conn.commit()
+            conn.close()
             self.id = None
-            from lib.db import get_db
+            return True
         return False
 
     @classmethod
     def create(cls, username, email, password, language="en"):
         # Hash the password before saving
         password_hash = hashlib.sha256(password.encode()).hexdigest()
-        
         user = cls(username, email, password_hash, language)
         user.save()
         return user
 
     @classmethod
     def find_by_username(cls, username):
-        CURSOR.execute("SELECT * FROM users WHERE username = ?", (username,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[0], row[5])
         return None
 
     @classmethod
     def find_by_email(cls, email):
-        CURSOR.execute("SELECT * FROM users WHERE email = ?", (email,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[0], row[5])
         return None
 
     @classmethod
     def find_by_id(cls, id):
-        CURSOR.execute("SELECT * FROM users WHERE id = ?", (id,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM users WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[0], row[5])
         return None

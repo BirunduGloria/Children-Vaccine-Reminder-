@@ -1,15 +1,15 @@
 # lib/cli.py
-from helpers import (
+from .helpers import (
     clear_screen, print_header, print_success, print_error, print_info,
     register_user, login_user, add_child_profile, view_child_profiles,
     delete_child_profile, view_vaccine_schedule, mark_vaccine_complete,
     view_all_vaccines, view_reminders, check_overdue_vaccines, exit_program
 )
-from models.user import User
-from models.child import Child
-from models.vaccine import Vaccine
-from models.child_vaccine import ChildVaccine
-from models.reminder import Reminder
+from .models.user import User
+from .models.child import Child
+from .models.vaccine import Vaccine
+from .models.child_vaccine import ChildVaccine
+from .models.reminder import Reminder
 from datetime import datetime, date, timedelta
 import os
 
@@ -597,7 +597,7 @@ def set_next_vaccine_reminder(user):
 
 def view_vaccine_schedule(child):
     """Display the vaccine schedule for a child in a table format."""
-    from models.child_vaccine import ChildVaccine
+    from .models.child_vaccine import ChildVaccine
     print(f"\nVaccine Schedule for {child.name}:")
     print("-" * 70)
     print(f"{'Vaccine':20} | {'Scheduled Date':15} | {'Status':10} | {'Completed Date':15}")

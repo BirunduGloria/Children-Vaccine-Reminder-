@@ -1,4 +1,4 @@
-from models import CONN, CURSOR
+from ..db import get_db
 from datetime import datetime, date
 
 class Child:
@@ -24,21 +24,6 @@ class Child:
         self._name = value.strip()
 
     @property
-        def save(self):
-            conn, cursor = get_db()
-            if self.id:
-                cursor.execute("""
-                    UPDATE children SET user_id=?, name=?, date_of_birth=?, gender=? WHERE id=?
-                """, (self.user_id, self.name, self.date_of_birth, self.gender, self.id))
-            else:
-                cursor.execute("""
-                    INSERT INTO children (user_id, name, date_of_birth, gender, created_at)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (self.user_id, self.name, self.date_of_birth, self.gender, self.created_at))
-                self.id = cursor.lastrowid
-            conn.commit()
-            conn.close()
-            return self
     def date_of_birth(self):
         return self._date_of_birth
 
@@ -47,21 +32,10 @@ class Child:
         if isinstance(value, str):
             try:
                 value = datetime.strptime(value, '%Y-%m-%d').date()
-        @classmethod
-        def find_by_id(cls, id):
-            conn, cursor = get_db()
-            cursor.execute("SELECT * FROM children WHERE id = ?", (id,))
-            row = cursor.fetchone()
-            conn.close()
-            from lib.db import get_db
-                return cls(row[1], row[2], row[3], row[4], row[0], row[5])
-            return None
             except ValueError:
                 raise ValueError("Date of birth must be in YYYY-MM-DD format")
-        
         if value > date.today():
             raise ValueError("Date of birth cannot be in the future")
-        
         self._date_of_birth = value
 
     @property
@@ -89,26 +63,29 @@ class Child:
 
     # ORM Methods
     def save(self):
+        conn, cursor = get_db()
         if self.id:
-            CURSOR.execute("""
+            cursor.execute("""
                 UPDATE children 
                 SET user_id = ?, name = ?, date_of_birth = ?, gender = ?
                 WHERE id = ?
             """, (self.user_id, self.name, self.date_of_birth, self.gender, self.id))
         else:
-            CURSOR.execute("""
+            cursor.execute("""
                 INSERT INTO children (user_id, name, date_of_birth, gender, created_at)
                 VALUES (?, ?, ?, ?, ?)
             """, (self.user_id, self.name, self.date_of_birth, self.gender, self.created_at))
-            self.id = CURSOR.lastrowid
-        
-        CONN.commit()
+            self.id = cursor.lastrowid
+        conn.commit()
+        conn.close()
         return self
 
     def delete(self):
         if self.id:
-            CURSOR.execute("DELETE FROM children WHERE id = ?", (self.id,))
-            CONN.commit()
+            conn, cursor = get_db()
+            cursor.execute("DELETE FROM children WHERE id = ?", (self.id,))
+            conn.commit()
+            conn.close()
             self.id = None
             return True
         return False
@@ -121,28 +98,36 @@ class Child:
 
     @classmethod
     def find_by_id(cls, id):
-        CURSOR.execute("SELECT * FROM children WHERE id = ?", (id,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM children WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[0], row[5])
         return None
 
     @classmethod
     def find_by_user_id(cls, user_id):
-        CURSOR.execute("SELECT * FROM children WHERE user_id = ?", (user_id,))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM children WHERE user_id = ?", (user_id,))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     @classmethod
     def find_by_name(cls, name):
-        CURSOR.execute("SELECT * FROM children WHERE name LIKE ?", (f"%{name}%",))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM children WHERE name LIKE ?", (f"%{name}%",))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     @classmethod
     def get_all(cls):
-        CURSOR.execute("SELECT * FROM children")
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM children")
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[0], row[5]) for row in rows]
 
     def get_user(self):

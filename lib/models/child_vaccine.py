@@ -1,4 +1,4 @@
-from lib.db import get_db
+from ..db import get_db
 from datetime import datetime, date, timedelta
 
 class ChildVaccine:
@@ -218,13 +218,13 @@ class ChildVaccine:
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     def get_child(self):
-        from models.child import Child
+        from .child import Child
         return Child.find_by_id(self.child_id)
 
     def get_vaccine(self):
-        from models.vaccine import Vaccine
+        from .vaccine import Vaccine
         return Vaccine.find_by_id(self.vaccine_id)
 
     def get_reminders(self):
-        from models.reminder import Reminder
+        from .reminder import Reminder
         return Reminder.find_by_child_vaccine_id(self.id)
