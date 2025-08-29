@@ -1,4 +1,4 @@
-from models import CONN, CURSOR
+from lib.db import get_db
 from datetime import datetime
 
 class Vaccine:
@@ -70,26 +70,29 @@ class Vaccine:
 
     # ORM Methods
     def save(self):
+        conn, cursor = get_db()
         if self.id:
-            CURSOR.execute("""
+            cursor.execute("""
                 UPDATE vaccines 
                 SET name = ?, description = ?, recommended_age_months = ?, dose_number = ?, is_required = ?
                 WHERE id = ?
             """, (self.name, self.description, self.recommended_age_months, self.dose_number, self.is_required, self.id))
         else:
-            CURSOR.execute("""
+            cursor.execute("""
                 INSERT INTO vaccines (name, description, recommended_age_months, dose_number, is_required, created_at)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (self.name, self.description, self.recommended_age_months, self.dose_number, self.is_required, self.created_at))
-            self.id = CURSOR.lastrowid
-        
-        CONN.commit()
+            self.id = cursor.lastrowid
+        conn.commit()
+        conn.close()
         return self
 
     def delete(self):
         if self.id:
-            CURSOR.execute("DELETE FROM vaccines WHERE id = ?", (self.id,))
-            CONN.commit()
+            conn, cursor = get_db()
+            cursor.execute("DELETE FROM vaccines WHERE id = ?", (self.id,))
+            conn.commit()
+            conn.close()
             self.id = None
             return True
         return False
@@ -102,34 +105,44 @@ class Vaccine:
 
     @classmethod
     def find_by_id(cls, id):
-        CURSOR.execute("SELECT * FROM vaccines WHERE id = ?", (id,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM vaccines WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[5], row[0], row[6])
         return None
 
     @classmethod
     def find_by_name(cls, name):
-        CURSOR.execute("SELECT * FROM vaccines WHERE name LIKE ?", (f"%{name}%",))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM vaccines WHERE name LIKE ?", (f"%{name}%",))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[0], row[6]) for row in rows]
 
     @classmethod
     def find_by_age_months(cls, age_months):
-        CURSOR.execute("SELECT * FROM vaccines WHERE recommended_age_months <= ? ORDER BY recommended_age_months", (age_months,))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM vaccines WHERE recommended_age_months <= ? ORDER BY recommended_age_months", (age_months,))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[0], row[6]) for row in rows]
 
     @classmethod
     def find_required(cls):
-        CURSOR.execute("SELECT * FROM vaccines WHERE is_required = 1 ORDER BY recommended_age_months")
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM vaccines WHERE is_required = 1 ORDER BY recommended_age_months")
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[0], row[6]) for row in rows]
 
     @classmethod
     def get_all(cls):
-        CURSOR.execute("SELECT * FROM vaccines ORDER BY recommended_age_months")
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM vaccines ORDER BY recommended_age_months")
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[0], row[6]) for row in rows]
 
     def get_child_vaccines(self):

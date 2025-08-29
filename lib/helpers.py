@@ -6,6 +6,7 @@ from models.child_vaccine import ChildVaccine
 from models.reminder import Reminder
 from datetime import datetime, date, timedelta
 import os
+import re
 
 def clear_screen():
     """Clear the terminal screen"""
@@ -74,6 +75,11 @@ def exit_program():
     print()
     exit()
 
+def is_valid_email(email):
+    """Validate email format"""
+    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    return re.match(pattern, email) is not None
+
 # User Management Functions
 def register_user():
     """Register a new user"""
@@ -88,6 +94,9 @@ def register_user():
             return None
         
         email = input("Email: ").strip()
+        if not is_valid_email(email):
+            print_error("Please enter a valid email address.")
+            return None
         if User.find_by_email(email):
             print_error("Email already registered")
             return None

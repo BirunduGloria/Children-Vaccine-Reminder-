@@ -335,6 +335,7 @@ def schedule_vaccine_for_child(user):
         print(f"Recommended Age: {vaccine.recommended_age_months} months")
         print(f"Dose Number: {vaccine.dose_number}")
         print(f"Required: {'Yes' if vaccine.is_required else 'No'}")
+        notify_email_reminder_policy()
     except Exception as e:
         print_error(f"Failed to schedule vaccine: {e}")
 
@@ -610,3 +611,16 @@ def view_vaccine_schedule(child):
         completed = cv.completed_date if cv.completed_date else "-"
         print(f"{vaccine.name:20} | {str(cv.scheduled_date):15} | {cv.status:10} | {str(completed):15}")
     print("-" * 70)
+
+def notify_email_reminder_policy():
+    print("\nNOTE: Email reminders are mandatory for all users.")
+    print("You will receive an email 3 days before each scheduled vaccine date.\n")
+
+def register_user_with_notification():
+    user = register_user()
+    if user:
+        notify_email_reminder_policy()
+    return user
+
+if __name__ == "__main__":
+    main()

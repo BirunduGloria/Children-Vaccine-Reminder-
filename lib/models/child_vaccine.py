@@ -1,4 +1,4 @@
-from models import CONN, CURSOR
+from lib.db import get_db
 from datetime import datetime, date, timedelta
 
 class ChildVaccine:
@@ -94,8 +94,9 @@ class ChildVaccine:
 
     # ORM Methods
     def save(self):
+        conn, cursor = get_db()
         if self.id:
-            CURSOR.execute("""
+            cursor.execute("""
                 UPDATE child_vaccines 
                 SET child_id = ?, vaccine_id = ?, scheduled_date = ?, completed_date = ?, 
                     status = ?, reminder_sent = ?
@@ -103,21 +104,23 @@ class ChildVaccine:
             """, (self.child_id, self.vaccine_id, self.scheduled_date, self.completed_date, 
                   self.status, self.reminder_sent, self.id))
         else:
-            CURSOR.execute("""
+            cursor.execute("""
                 INSERT INTO child_vaccines (child_id, vaccine_id, scheduled_date, completed_date, 
                                           status, reminder_sent, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (self.child_id, self.vaccine_id, self.scheduled_date, self.completed_date, 
                   self.status, self.reminder_sent, self.created_at))
-            self.id = CURSOR.lastrowid
-        
-        CONN.commit()
+            self.id = cursor.lastrowid
+        conn.commit()
+        conn.close()
         return self
 
     def delete(self):
         if self.id:
-            CURSOR.execute("DELETE FROM child_vaccines WHERE id = ?", (self.id,))
-            CONN.commit()
+            conn, cursor = get_db()
+            cursor.execute("DELETE FROM child_vaccines WHERE id = ?", (self.id,))
+            conn.commit()
+            conn.close()
             self.id = None
             return True
         return False
@@ -145,59 +148,73 @@ class ChildVaccine:
 
     @classmethod
     def find_by_id(cls, id):
-        CURSOR.execute("SELECT * FROM child_vaccines WHERE id = ?", (id,))
-        row = CURSOR.fetchone()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM child_vaccines WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        conn.close()
         if row:
             return cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7])
         return None
 
     @classmethod
     def find_by_child_id(cls, child_id):
-        CURSOR.execute("SELECT * FROM child_vaccines WHERE child_id = ? ORDER BY scheduled_date", (child_id,))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM child_vaccines WHERE child_id = ? ORDER BY scheduled_date", (child_id,))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     @classmethod
     def find_by_vaccine_id(cls, vaccine_id):
-        CURSOR.execute("SELECT * FROM child_vaccines WHERE vaccine_id = ? ORDER BY scheduled_date", (vaccine_id,))
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM child_vaccines WHERE vaccine_id = ? ORDER BY scheduled_date", (vaccine_id,))
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     @classmethod
     def find_upcoming_by_child_id(cls, child_id):
-        CURSOR.execute("""
+        conn, cursor = get_db()
+        cursor.execute("""
             SELECT * FROM child_vaccines 
             WHERE child_id = ? AND status = 'scheduled' AND scheduled_date >= ?
             ORDER BY scheduled_date
         """, (child_id, date.today()))
-        rows = CURSOR.fetchall()
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     @classmethod
     def find_overdue_by_child_id(cls, child_id):
-        CURSOR.execute("""
+        conn, cursor = get_db()
+        cursor.execute("""
             SELECT * FROM child_vaccines 
             WHERE child_id = ? AND status != 'completed' AND scheduled_date < ?
             ORDER BY scheduled_date
         """, (child_id, date.today()))
-        rows = CURSOR.fetchall()
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     @classmethod
     def find_due_soon(cls, days=7):
         target_date = date.today() + timedelta(days=days)
-        CURSOR.execute("""
+        conn, cursor = get_db()
+        cursor.execute("""
             SELECT * FROM child_vaccines 
             WHERE status = 'scheduled' AND scheduled_date <= ? AND scheduled_date >= ?
             ORDER BY scheduled_date
         """, (target_date, date.today()))
-        rows = CURSOR.fetchall()
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     @classmethod
     def get_all(cls):
-        CURSOR.execute("SELECT * FROM child_vaccines ORDER BY scheduled_date")
-        rows = CURSOR.fetchall()
+        conn, cursor = get_db()
+        cursor.execute("SELECT * FROM child_vaccines ORDER BY scheduled_date")
+        rows = cursor.fetchall()
+        conn.close()
         return [cls(row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[7]) for row in rows]
 
     def get_child(self):

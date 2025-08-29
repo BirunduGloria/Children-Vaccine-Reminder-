@@ -1,5 +1,5 @@
 # lib/seed_data.py
-from models import CONN, CURSOR
+from lib.db import get_db
 from models.vaccine import Vaccine
 from models.user import User
 from models.child import Child
@@ -196,7 +196,9 @@ def seed_all():
         
     except Exception as e:
         print(f"Error during seeding: {e}")
-        CONN.rollback()
+        conn, _ = get_db()
+        conn.rollback()
+        conn.close()
 
 if __name__ == "__main__":
     seed_all()

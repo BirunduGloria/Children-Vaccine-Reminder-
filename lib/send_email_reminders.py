@@ -2,7 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date, timedelta
-from models import CONN, CURSOR
+from lib.db import get_db
 from models.child_vaccine import ChildVaccine
 from models.child import Child
 from models.user import User
@@ -21,7 +21,8 @@ def send_email(to_email, subject, body, smtp_server, smtp_port, smtp_user, smtp_
 def send_vaccine_reminders():
     # Find all vaccines scheduled 3 days from today
     target_date = date.today() + timedelta(days=3)
-    CURSOR.execute("""
+    conn, cursor = get_db()
+    cursor.execute("""
         SELECT cv.id, c.name, u.email, v.name, cv.scheduled_date
         FROM child_vaccines cv
         JOIN children c ON cv.child_id = c.id
@@ -29,7 +30,8 @@ def send_vaccine_reminders():
         JOIN vaccines v ON cv.vaccine_id = v.id
         WHERE cv.scheduled_date = ? AND cv.status = 'scheduled'
     """, (target_date,))
-    reminders = CURSOR.fetchall()
+    reminders = cursor.fetchall()
+    conn.close()
     for cv_id, child_name, user_email, vaccine_name, scheduled_date in reminders:
         subject = f"Vaccine Reminder: {vaccine_name} for {child_name}"
         body = f"This is a reminder that {child_name} is scheduled for the {vaccine_name} vaccine on {scheduled_date}."

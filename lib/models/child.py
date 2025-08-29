@@ -24,6 +24,21 @@ class Child:
         self._name = value.strip()
 
     @property
+        def save(self):
+            conn, cursor = get_db()
+            if self.id:
+                cursor.execute("""
+                    UPDATE children SET user_id=?, name=?, date_of_birth=?, gender=? WHERE id=?
+                """, (self.user_id, self.name, self.date_of_birth, self.gender, self.id))
+            else:
+                cursor.execute("""
+                    INSERT INTO children (user_id, name, date_of_birth, gender, created_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (self.user_id, self.name, self.date_of_birth, self.gender, self.created_at))
+                self.id = cursor.lastrowid
+            conn.commit()
+            conn.close()
+            return self
     def date_of_birth(self):
         return self._date_of_birth
 
@@ -32,6 +47,15 @@ class Child:
         if isinstance(value, str):
             try:
                 value = datetime.strptime(value, '%Y-%m-%d').date()
+        @classmethod
+        def find_by_id(cls, id):
+            conn, cursor = get_db()
+            cursor.execute("SELECT * FROM children WHERE id = ?", (id,))
+            row = cursor.fetchone()
+            conn.close()
+            from lib.db import get_db
+                return cls(row[1], row[2], row[3], row[4], row[0], row[5])
+            return None
             except ValueError:
                 raise ValueError("Date of birth must be in YYYY-MM-DD format")
         
