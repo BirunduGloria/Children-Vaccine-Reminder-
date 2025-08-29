@@ -192,8 +192,11 @@ This project follows best practices for:
 - Code organization and modularity
 - Error handling and validation
 
+## Author
+Gloria Birundu.
+
 ## License
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+This project is licensed under the MIT License.
 
 ##  Support
 For questions or issues:
