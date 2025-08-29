@@ -19,7 +19,7 @@ A comprehensive Python CLI application that helps parents and caregivers manage 
 - Educational Information: Detailed descriptions and information about each vaccine
 
 ### Reminder System
-- Automated Reminders: 7-day advance notifications for upcoming vaccines
+- Automated Reminders: 3-day advance notifications for upcoming vaccines
 - Custom Reminders: Create personalized reminders for specific needs
 - Overdue Alerts: Track and manage overdue vaccines
 - Due Soon Notifications: Identify vaccines due in the next 7 days

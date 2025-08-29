@@ -1,4 +1,3 @@
-# lib/cli.py
 from .helpers import (
     clear_screen, print_header, print_success, print_error, print_info,
     register_user, login_user, add_child_profile, view_child_profiles,

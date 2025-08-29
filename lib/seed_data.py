@@ -1,4 +1,4 @@
-# lib/seed_data.py
+
 from lib.db import get_db
 from models.vaccine import Vaccine
 from models.user import User
