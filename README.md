@@ -80,14 +80,14 @@ After seeding the database, you can use these credentials:
 - **Username**: demo_user
 - **Password**: password123
 
-## 📱 Usage
+##  Usage
 
 ### Main Menu Options
-1. **Manage Child Profiles**: Add, view, and delete child profiles
-2. **Manage Vaccines**: View vaccine schedules and mark completions
-3. **Manage Reminders**: View and create custom reminders
-4. **View Health Records**: Comprehensive overview of all children's vaccine status
-5. **Account Settings**: Change language, password, or delete account
+1. Manage Child Profiles: Add, view, and delete child profiles
+2. Manage Vaccines: View vaccine schedules and mark completions
+3. Manage Reminders: View and create custom reminders
+4. View Health Records: Comprehensive overview of all children's vaccine status
+5. Account Settings: Change language, password, or delete account
 
 ### Adding a Child Profile
 1. Select "Manage Child Profiles" from the main menu
@@ -215,4 +215,4 @@ This project demonstrates:
 
 ---
 
-**Stay healthy and keep your children protected! **
+Stay healthy and keep your children protected! 
