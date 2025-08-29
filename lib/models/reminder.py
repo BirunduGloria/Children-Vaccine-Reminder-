@@ -46,7 +46,7 @@ class Reminder:
 
     @sent.setter
     def sent(self, value):
-        # Handle both boolean and integer values (SQLite stores booleans as integers)
+        # Handle both boolean and integer values 
         if isinstance(value, bool):
             self._sent = value
         elif isinstance(value, int):
