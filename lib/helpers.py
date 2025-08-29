@@ -118,6 +118,7 @@ def register_user():
 
 def login_user():
     """Login existing user"""
+    
     print_header()
     print("USER LOGIN")
     print("-" * 30)
